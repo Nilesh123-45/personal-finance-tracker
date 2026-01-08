@@ -5,16 +5,15 @@ require('dotenv').config();
 
 const app = express();
 
-// Middleware
+// this is the middleware part where i can go
 app.use(cors());
 app.use(bodyParser.json());
 
-// Import Routes
+// this is the import routes for the authroutes , transasction routes and the budget routes
 const authRoutes = require('./routes/Authroutes');
 const transactionRoutes = require('./routes/TransactionRoutes');
 const budgetRoutes = require('./routes/Budgetroutes');
 
-// Use Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/budgets', budgetRoutes);
