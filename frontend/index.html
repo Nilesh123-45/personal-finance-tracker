@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Finance Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="auth-section">
+        <div class="auth-card">
+            <h2 style="color: #667eea;">Welcome Back</h2>
+            <p style="color: #888; margin-bottom: 20px;">Manage your finances with style</p>
+            <form id="login-form">
+                <input type="email" id="login-email" placeholder="Email Address" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button type="submit" class="gradient-btn">Login</button>
+            </form>
+            <p class="switch-text">New here? <a href="#" onclick="toggleAuth()">Create Account</a></p>
+        </div>
+
+        <div class="auth-card" id="register-card" style="display:none;">
+            <h2 style="color: #667eea;">Join Us</h2>
+            <p style="color: #888; margin-bottom: 20px;">Start your journey today</p>
+            <form id="register-form">
+                <input type="text" id="reg-username" placeholder="Full Name" required>
+                <input type="email" id="reg-email" placeholder="Email Address" required>
+                <input type="password" id="reg-password" placeholder="Password" required>
+                <button type="submit" class="gradient-btn">Register</button>
+            </form>
+            <p class="switch-text">Already have an account? <a href="#" onclick="toggleAuth()">Login</a></p>
+        </div>
+    </div>
+
+    <div id="dashboard-section" style="display:none;">
+        <nav class="navbar">
+<div class="logo-container">
+    <div class="logo-icon">
+        <img src="../OIP (1).webp" alt="Logo" style="width: 40px; height: 40px; border-radius: 50%;">
+    </div>
+    <h1 class="logo">Finance Tracker</h1>
+</div>
+            <button class="logout-btn" onclick="logout()" title="Logout">
+                Logout ⎋
+            </button>
+        </nav>
+
+        <div class="container">
+            
+            <section class="card budget-hero">
+                <div class="card-header-white">
+                    <h3>Monthly Budgets</h3>
+                    <button onclick="toggleBudgetForm()" class="glass-btn">+ Set Budget</button>
+                </div>
+                
+                <form id="budget-form" style="display:none; margin-top:15px; background: rgba(255,255,255,0.2); padding:15px; border-radius: 10px;">
+                    <select id="b-category" class="glass-input">
+                        <option value="3">Food</option>
+                        <option value="4">Rent</option>
+                        <option value="5">Entertainment</option>
+                        <option value="7">Transport</option>
+                    </select>
+                    <input type="number" id="b-amount" placeholder="Limit (e.g. 5000)" class="glass-input" required min="0">
+                    <button type="submit" class="white-btn">Save Budget</button>
+                </form>
+
+                <div id="budget-container" style="margin-top:20px;">
+                    <p style="color: white; opacity: 0.8;">Loading budgets...</p>
+                </div>
+            </section>
+
+            <section class="card">
+                <h3>Financial Overview</h3>
+                <div style="position: relative; height: 300px; width: 100%; display: flex; justify-content: center;">
+                    <canvas id="overviewChart"></canvas>
+                </div>
+            </section>
+
+            <div class="grid-row">
+                <section class="card">
+                    <h3>Add Transaction</h3>
+                    <form id="transaction-form">
+                        <div class="form-row">
+                            <select id="t-type">
+                                <option value="expense">Expense 🔴</option>
+                                <option value="income">Income 🟢</option>
+                            </select>
+                            <select id="t-category">
+                                <option value="3">Food</option>
+                                <option value="4">Rent</option>
+                                <option value="5">Entertainment</option>
+                                <option value="1">Salary</option>
+                            </select>
+                        </div>
+                        <input type="text" id="t-desc" placeholder="Description (e.g. Lunch)" required>
+                        <input type="number" id="t-amount" placeholder="Amount (₹)" required min="0">
+                        <input type="date" id="t-date" required>
+
+                        <div style="margin: 10px 0; padding: 10px; background: rgba(0,0,0,0.05); border-radius: 10px;">
+                        <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size: 0.9rem;">
+                            <input type="checkbox" id="is-recurring" onchange="toggleRecurOptions()"> 
+                            <span>Repeat this transaction?</span>
+                        </label>
+                        
+                        <div id="recur-options" style="display:none; margin-top:10px;">
+                            <select id="recur-freq" class="glass-input">
+                                <option value="monthly">Every Month</option>
+                                <option value="weekly">Every Week</option>
+                            </select>
+                        </div>
+                    </div>
+
+                        <button type="submit" class="gradient-btn">Add Now</button>
+                    </form>
+                </section>
+
+                <section class="card history-card">
+                    <h3>History</h3>
+                    <div style="display:flex; gap:10px; margin-bottom:15px;">
+                        <input type="text" id="search-input" placeholder="Search..." onkeyup="filterTransactions()">
+                        <select id="filter-type" onchange="filterTransactions()">
+                            <option value="all">All</option>
+                            <option value="income">Income</option>
+                            <option value="expense">Expense</option>
+                        </select>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table id="history-table">
+                                                            <thead>
+    <tr>
+        <th>Date</th>
+        <th>Desc</th>
+        <th>Cat</th>
+        <th>Amt</th>
+        <th>Action</th> </tr>
+</thead>
+                            <tbody id="history-list">
+                                </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="auth-section">
+        <div class="auth-card">
+            <h2>Welcome Back</h2>
+            <form id="login-form">
+                <input type="email" id="login-email" placeholder="Email" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p>New here? <a href="#" onclick="toggleAuth()">Register</a></p>
+        </div>
+
+        <div class="auth-card" id="register-card" style="display:none;">
+            <h2>Create Account</h2>
+            <form id="register-form">
+                <input type="text" id="reg-username" placeholder="Username" required>
+                <input type="email" id="reg-email" placeholder="Email" required>
+                <input type="password" id="reg-password" placeholder="Password" required>
+                <button type="submit">Register</button>
+            </form>
+            <p>Already have an account? <a href="#" onclick="toggleAuth()">Login</a></p>
+        </div>
+    </div>
+
+    <div id="dashboard-section" style="display:none;">
+<nav class="navbar">
+    <h1 class="logo">FinanceTracker</h1>
+
+    <button class="logout-btn" onclick="logout()" title="Logout">
+        ⎋
+    </button>
+</nav>
+
+        <div class="container">
+            
+            <section class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>Monthly Budgets</h3>
+                    <button onclick="toggleBudgetForm()" style="width:auto; padding:5px 10px; font-size:12px;">+ Set New Budget</button>
+                </div>
+                
+                <form id="budget-form" style="display:none; margin-top:15px; background:#f9f9f9; padding:15px;">
+                    <select id="b-category">
+                        <option value="3">Food</option>
+                        <option value="4">Rent</option>
+                        <option value="5">Entertainment</option>
+                        <option value="7">Transport</option>
+                    </select>
+                    <input type="number" id="b-amount" placeholder="Limit (e.g. 5000)" required>
+                    <button type="submit">Save Budget</button>
+                </form>
+
+                <div id="budget-container" style="margin-top:20px;">
+                    <p>Loading budgets...</p>
+                </div>
+            </section>
+
+            <section class="card">
+                <h3>Add New Transaction</h3>
+                <form id="transaction-form">
+                    <div class="form-row">
+                        <select id="t-type">
+                            <option value="expense">Expense</option>
+                            <option value="income">Income</option>
+                        </select>
+                        <select id="t-category">
+                            <option value="3">Food</option>
+                            <option value="4">Rent</option>
+                            <option value="5">Entertainment</option>
+                            <option value="1">Salary</option>
+                        </select>
+                    </div>
+                    <input type="text" id="t-desc" placeholder="Description (e.g. Lunch)" required>
+                    <input type="number" id="t-amount" placeholder="Amount" required>
+                    <input type="date" id="t-date" required>
+                    <button type="submit">Add Transaction</button>
+                </form>
+            </section>
+
+            <section class="card">
+                <h3>Transaction History</h3>
+                
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <input type="text" id="search-input" placeholder="Search (e.g. Lunch)..." onkeyup="filterTransactions()">
+                    <select id="filter-type" onchange="filterTransactions()">
+                        <option value="all">All</option>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                    </select>
+                </div>
+
+                <table id="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-list">
+                        </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> -->
