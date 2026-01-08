@@ -11,7 +11,7 @@ A Full Stack finance manager built to track expenses, set strict monthly budgets
 * **Security:** JWT Authentication & Bcrypt password hashing.
 
 ##  Tech Stack
-* **Frontend:** Vanilla JS, HTML5, Modern CSS (Glassmorphism).
+* **Frontend:** HTML5, Modern CSS (Glassmorphism).
 * **Backend:** Node.js, Express.js.
 * **Database:** MySQL.
 
@@ -21,3 +21,5 @@ A Full Stack finance manager built to track expenses, set strict monthly budgets
    cd backend
    npm install
    node server.js
+
+   **Note: * For database , i create the tables in my mysql workbench , so in order connect this with databse u just have to add the databse queries in tha databse , then u can run the program smoothly.
