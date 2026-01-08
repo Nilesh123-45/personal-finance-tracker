@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
-// 1. SET BUDGET (POST /api/budgets) <-- THIS WAS MISSING
+// @ postmapping type in spring boot   /api/budgets) 
 router.post('/', async (req, res) => {
     try {
         const { userId, categoryId, amount, month, year } = req.body;
         
-        // Updates budget if it exists, inserts if it doesn't
+        // update and insert budget
         const sql = `INSERT INTO budgets (user_id, category_id, amount_limit, month, year) 
                      VALUES (?, ?, ?, ?, ?) 
                      ON DUPLICATE KEY UPDATE amount_limit = ?`;
@@ -19,11 +19,11 @@ router.post('/', async (req, res) => {
     }
 });
 
-// 2. GET BUDGET STATUS (GET /api/budgets/status/:userId)
+// @Getmapping type i use in spring boot , for read the value  (api/budgets/status/:userId)
 router.get('/status/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
-        const currentMonth = new Date().getMonth() + 1; // 1 = Jan, 2 = Feb...
+        const currentMonth = new Date().getMonth() + 1; 
 
         const sql = `
             SELECT c.name, b.amount_limit, COALESCE(SUM(t.amount), 0) as spent
