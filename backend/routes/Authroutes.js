@@ -5,20 +5,20 @@ const jwt = require('jsonwebtoken');
 const db = require('../db'); 
 require('dotenv').config();
 
-// 1. REGISTER (POST /api/auth/register)
+// @postmapping i.e register  (POST /api/auth/register)
 router.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
         
-        // Check if user exists
+        // user existance
         const [existing] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
         if (existing.length > 0) return res.status(400).json({ error: "Email already exists" });
 
-        // Hash password
+        // hashing the pw
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
 
-        // Save to DB
+        // save in the database
         await db.query('INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)', 
             [username, email, hash]);
             
@@ -28,7 +28,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// 2. LOGIN (POST /api/auth/login)
+//@postmapping login (/api/auth/login) use in spring boot in the last project i build
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -41,7 +41,6 @@ router.post('/login', async (req, res) => {
         
         if (!isMatch) return res.status(400).json({ error: "Invalid password" });
 
-        // Create Token
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         
         res.json({ token, user: { id: user.id, username: user.username } });
